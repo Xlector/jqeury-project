@@ -598,40 +598,50 @@ _jquery("#Ajouter").on("click", ()=>{
         Note: parseInt(_jquery("#Note").val()) <= 20 && parseInt(_jquery("#Note").val()) >= 0
     };
     if (Object.values(tests).reduce((a, b)=>a + b) == 4) {
-        let tr = `<tr class="cursor-pointer hover:bg-slate-300 border-b-2 py-4 px-6 border-b-gray-300">
+        let tr = _jquery(`<tr class="cursor-pointer hover:bg-slate-300 border-b-2 py-4 px-6 border-b-gray-300">
     <td class="py-4 px-6 CNES">${_jquery("#CNE").val().trim()}</td>
-    <td class="py-4 px-6">${_jquery("#Nom_prenom").val().trim()}</td>
+    <td class="py-4 px-6 Noms">${_jquery("#Nom_prenom").val().trim()}</td>
     <td class="py-4 px-6 Matieres">${_jquery(".item").text().trim()}</td>
     <td class="py-4 px-6 text-center">${_jquery("#Coefficient").val()}</td>
     <td class="py-4 px-6 text-center">${_jquery("#Note").val().trim()}</td>
     <td class="py-4 px-6 notes text-center">${_jquery("#Note").val().trim()}</td>
-  </tr>`;
+  </tr>`).on("click", function() {
+            temp = _jquery(this).text().trim().split("\n");
+            current_index = _jquery(this).index();
+            console.error(current_index);
+            _jquery("#CNE").val(temp[0]);
+            _jquery("#Nom_prenom").val(temp[1].trim());
+            tom_select.setValue(temp[2].trim(), true);
+            _jquery("#Coefficient").val(temp[3].trim());
+            _jquery("#Note").val(temp[4].trim());
+        });
         const CNES = _jquery(".CNES").toArray();
         const MATIERES = _jquery(".Matieres").toArray();
+        const NOMS = _jquery(".Noms").toArray();
         const object = CNES.reduce((accumulator, element, index)=>{
             return {
                 ...accumulator,
-                [element.innerHTML]: MATIERES[index].innerHTML
+                [element.innerHTML]: [
+                    MATIERES[index].innerHTML,
+                    NOMS[index].innerHTML
+                ]
             };
         }, {});
-        if (object[_jquery("#CNE").val().trim()] != _jquery(".item").text().trim()) {
-            _jquery("#tbody").append(_jquery(tr).on("click", function() {
-                temp = _jquery(this).text().trim().split("\n");
-                current_index = _jquery(this).index();
-                console.error(current_index);
-                _jquery("#CNE").val(temp[0]);
-                _jquery("#Nom_prenom").val(temp[1].trim());
-                // $(".item").remove();
-                tom_select.setValue(temp[2].trim(), true);
-                console.log(temp[2].trim());
-                _jquery("#Coefficient").val(temp[3].trim());
-                _jquery("#Note").val(temp[4].trim());
-            }));
+        console.error(object[_jquery("#CNE").val().trim()]);
+        if (_jquery.isEmptyObject(object) || object[_jquery("#CNE").val().trim()] == undefined || object[_jquery("#CNE").val().trim()][0] != _jquery(".item").text().trim() && object[_jquery("#CNE").val().trim()][1] == _jquery("#Nom_prenom").text().trim()) {
+            _jquery("#tbody").append(_jquery(tr));
+            console.error(object[_jquery("#CNE").val().trim()]);
             reset();
             calculer_moyenne();
-        } else (0, _sweetalertDefault.default)({
+        } else if (object[_jquery("#CNE").val().trim()][0] == _jquery(".item").text().trim()) (0, _sweetalertDefault.default)({
             title: "Attention!",
             text: "vous ne pouvez pas affecter la m\xeame mati\xe8re a ce \xe9tudiant",
+            icon: "error",
+            dangerMode: true
+        });
+        else if (object[_jquery("#CNE").val().trim()][1] != _jquery("#Nom_prenom").text().trim()) (0, _sweetalertDefault.default)({
+            title: "Attention!",
+            text: "vous ne pouvez pas affecter la different a cette CNE",
             icon: "error",
             dangerMode: true
         });
@@ -663,7 +673,7 @@ _jquery("#Modifier").on("click", ()=>{
         if (Object.values(tests).reduce((a, b)=>a + b) == 4) {
             let temp_tr = _jquery(`<tr class="cursor-pointer hover:bg-slate-300 border-b-2 py-4 px-6 border-b-gray-300">
     <td class="py-4 px-6 CNES">${_jquery("#CNE").val().trim()}</td>
-    <td class="py-4 px-6">${_jquery("#Nom_prenom").val().trim()}</td>
+    <td class="py-4 px-6 Noms">${_jquery("#Nom_prenom").val().trim()}</td>
     <td class="py-4 px-6 Matieres">${_jquery(".item").text().trim()}</td>
     <td class="py-4 px-6 text-center">${_jquery("#Coefficient").val()}</td>
     <td class="py-4 px-6 text-center">${_jquery("#Note").val().trim()}</td>
@@ -671,14 +681,12 @@ _jquery("#Modifier").on("click", ()=>{
   </tr>`).on("click", function() {
                 temp = _jquery(this).text().trim().split("\n");
                 current_index = _jquery(this).index();
-                console.error(current_index);
                 _jquery("#CNE").val(temp[0]);
                 _jquery("#Nom_prenom").val(temp[1].trim());
                 tom_select.setValue(temp[2].trim(), true);
                 _jquery("#Coefficient").val(temp[3].trim());
                 _jquery("#Note").val(temp[4].trim());
             });
-            // temp_tr.
             if (current_index == 0) {
                 _jquery("#tbody > tr").eq(current_index).remove();
                 _jquery("#tbody").prepend(temp_tr).index = 0;
