@@ -621,11 +621,13 @@ _jquery("#Ajouter").on("click", ()=>{
                 console.error(current_index);
                 _jquery("#CNE").val(temp[0]);
                 _jquery("#Nom_prenom").val(temp[1].trim());
-                _jquery(".item").html(temp[2].trim());
+                // $(".item").remove();
+                tom_select.setValue(temp[2].trim(), true);
+                console.log(temp[2].trim());
                 _jquery("#Coefficient").val(temp[3].trim());
                 _jquery("#Note").val(temp[4].trim());
             }));
-            // reset();
+            reset();
             calculer_moyenne();
         } else (0, _sweetalertDefault.default)({
             title: "Attention!",
@@ -646,11 +648,10 @@ _jquery("#Ajouter").on("click", ()=>{
     }
 });
 _jquery("#Modifier").on("click", ()=>{
-    if (current_index.isNaN()) (0, _sweetalertDefault.default)({
+    if (isNaN(current_index)) (0, _sweetalertDefault.default)({
         title: "Attention!",
         text: "Cliquer sur une tuple",
-        icon: "error",
-        dangerMode: true
+        icon: "info"
     });
     else {
         let tests = {
@@ -660,35 +661,45 @@ _jquery("#Modifier").on("click", ()=>{
             Note: parseInt(_jquery("#Note").val()) <= 20 && parseInt(_jquery("#Note").val()) >= 0
         };
         if (Object.values(tests).reduce((a, b)=>a + b) == 4) {
-            let temp_tr = `<tr class="cursor-pointer hover:bg-slate-300 border-b-2 py-4 px-6 border-b-gray-300">
+            let temp_tr = _jquery(`<tr class="cursor-pointer hover:bg-slate-300 border-b-2 py-4 px-6 border-b-gray-300">
     <td class="py-4 px-6 CNES">${_jquery("#CNE").val().trim()}</td>
     <td class="py-4 px-6">${_jquery("#Nom_prenom").val().trim()}</td>
     <td class="py-4 px-6 Matieres">${_jquery(".item").text().trim()}</td>
     <td class="py-4 px-6 text-center">${_jquery("#Coefficient").val()}</td>
     <td class="py-4 px-6 text-center">${_jquery("#Note").val().trim()}</td>
     <td class="py-4 px-6 notes text-center">${_jquery("#Note").val().trim()}</td>
-  </tr>`;
-            if (current_index == 0) {
-                _jquery("#tbody > tr").eq(0).remove();
-                _jquery("#tbody").prepend(temp_tr).index = 0;
-            } else {
-                _jquery("#tbody > tr").eq(current_index).remove();
-                _jquery("#tbody > tr").eq(current_index - 1).after(temp_tr);
-            }
-            temp_tr.on("click", function() {
+  </tr>`).on("click", function() {
                 temp = _jquery(this).text().trim().split("\n");
                 current_index = _jquery(this).index();
                 console.error(current_index);
                 _jquery("#CNE").val(temp[0]);
                 _jquery("#Nom_prenom").val(temp[1].trim());
-                _jquery(".item").html(temp[2].trim());
+                tom_select.setValue(temp[2].trim(), true);
                 _jquery("#Coefficient").val(temp[3].trim());
                 _jquery("#Note").val(temp[4].trim());
             });
+            // temp_tr.
+            if (current_index == 0) {
+                _jquery("#tbody > tr").eq(current_index).remove();
+                _jquery("#tbody").prepend(temp_tr).index = 0;
+                reset();
+            } else {
+                _jquery("#tbody > tr").eq(current_index).remove();
+                _jquery("#tbody > tr").eq(current_index - 1).after(temp_tr);
+                reset();
+            }
             current_index = NaN;
             calculer_moyenne();
         }
     }
+});
+_jquery("#Retirer").on("click", ()=>{
+    if (isNaN(current_index)) (0, _sweetalertDefault.default)({
+        title: "Attention!",
+        text: "Cliquer sur une tuple",
+        icon: "info"
+    });
+    else _jquery("#tbody > tr").eq(current_index).remove();
 });
 
 },{"jquery":"hgMhh","tom-select":"kDd6B","sweetalert":"38a65","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hgMhh":[function(require,module,exports) {
